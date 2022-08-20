@@ -1,27 +1,46 @@
+
+
 const socket = io();
 
-const statusConnection = () => {
-    console.log("Estado de conection: " + socket.connected)
-}
-socket.on('connect', () => {
-    console.log("El socket " + socket.id + " se ha conectado uwu")
-    statusConnection()
+
+
+//se recibe el evento
+socket.on("welcome", data => {
+    console.log("info recibida: ", data)
+    const text = document.querySelector("#text")
+    text.textContent = data;
 })
 
-socket.on("connect_error", () => {
-    console.log("No pude conectarme GOD :(" );
-})
+const boton = document.querySelector("#to-server")
+boton.addEventListener("click", () => socket.emit("server", "Mensaje hacia el servidor, presionando el boton"))
 
-socket.on('disconnect', () => {
-    console.log("El socket se ha desconectado ")
-    statusConnection()
-})
-
-socket.io.on("reconnect_attempt", () => {
-    console.log("Intentando reconectarme :|");
+socket.on("everyone", message => {
+    console.log(socket.id + "se ha conectado usando io.emit, 'mensaje o todos: ---> " + message)
 })
 
 
-socket.io.on("reonnect", () => {
-    console.log("Me logre reconectar :)");
+const botonLast = document.querySelector("#send-last")
+botonLast.addEventListener("click", () => {
+    socket.emit("last", "Hola has sido el ultimo en conectarte")
 })
+
+
+socket.on("salute", message => console.log(message))
+
+
+//on
+
+socket.on("on", () => console.log("ON se emite varias veces"))
+
+//once
+socket.once("once", () => console.log("ONCE se emita una vez"))
+
+//off
+
+const listenerOff = () => console.log("evento que se apaga despues de 2 segundos")
+
+socket.on("off", listenerOff)
+
+setTimeout(() => {
+    socket.off("off", listenerOff)
+}, 2000)
