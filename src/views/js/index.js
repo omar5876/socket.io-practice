@@ -1,43 +1,46 @@
-const socket = io();
+const user = prompt("Escribe tu usuario");
 
-const connectRoom1 = document.querySelector("#connectRoom1")
-const connectRoom2 = document.querySelector("#connectRoom2")
-const connectRoom3 = document.querySelector("#connectRoom3")
+const profes = ["RetaxMaster", "juandc", "GNDX"];
 
+let socketNamepace, group;
 
-connectRoom1.addEventListener("click", () => {
-    socket.emit("connect to room", "room1")
+const chat = document.querySelector("#chat");
+const namespace = document.querySelector("#namespace");
+
+if(profes.includes(user)){
+    socketNamepace = io("/teachers");
+    group = "teachers";
+}
+else {
+    socketNamepace = io("/students");
+    group = "students";
+
+}
+
+socketNamepace.on("connect", () => {
+    namespace.textContent = group;
 })
 
-connectRoom2.addEventListener("click", () => {
-    socket.emit("connect to room", "room2")
-})
 
-connectRoom3.addEventListener("click", () => {
-    socket.emit("connect to room", "room3")
-})
-
-
-//enviar mensaje
-
+//programando la logica de mensajes
 
 const sendMessage = document.querySelector("#sendMessage");
 
 sendMessage.addEventListener("click", () => {
-    const message = prompt("Escribe tu mensaje")
+    const message = prompt("Escribe tu mensaje");
 
-    socket.emit("message", message)
+    socketNamepace.emit("send message", {
+        user,
+        message
+    })
 })
 
 
-//Recibir el evento del mensaje
-
-socket.on("send message", data => {
-    const {room} = data;
-    const {message} = data;
+socketNamepace.on("message", messageData => {
+    const {user, message} = messageData;
 
     const li = document.createElement("li");
-    li.textContent = message;
+    li.textContent = `${user} : ${message}`;
 
-    document.querySelector(`#${room}`).append(li);
+    chat.append(li);
 })
