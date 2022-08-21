@@ -1,46 +1,36 @@
-
-
 const socket = io();
 
+const circle = document.querySelector("#circle");
+
+const drawCircle = (position) => {
+    circle.style.top = position.top;
+    circle.style.left = position.left;
+}
+
+const drag = e => {
+   
+
+    const position = {
+        top: e.clientY + "px",
+        left: e.clientX + "px"
+    }
+
+    drawCircle(position)
+
+    socket.emit("circle position", position)
 
 
-//se recibe el evento
-socket.on("welcome", data => {
-    console.log("info recibida: ", data)
-    const text = document.querySelector("#text")
-    text.textContent = data;
+}
+
+document.addEventListener("mousedown", e => {
+    document.addEventListener("mousemove", drag)
 })
 
-const boton = document.querySelector("#to-server")
-boton.addEventListener("click", () => socket.emit("server", "Mensaje hacia el servidor, presionando el boton"))
-
-socket.on("everyone", message => {
-    console.log(socket.id + "se ha conectado usando io.emit, 'mensaje o todos: ---> " + message)
+document.addEventListener("mouseup", e => {
+    document.removeEventListener("mousemove", drag)
 })
 
 
-const botonLast = document.querySelector("#send-last")
-botonLast.addEventListener("click", () => {
-    socket.emit("last", "Hola has sido el ultimo en conectarte")
+socket.on("move circle", position => {
+    drawCircle(position)
 })
-
-
-socket.on("salute", message => console.log(message))
-
-
-//on
-
-socket.on("on", () => console.log("ON se emite varias veces"))
-
-//once
-socket.once("once", () => console.log("ONCE se emita una vez"))
-
-//off
-
-const listenerOff = () => console.log("evento que se apaga despues de 2 segundos")
-
-socket.on("off", listenerOff)
-
-setTimeout(() => {
-    socket.off("off", listenerOff)
-}, 2000)
