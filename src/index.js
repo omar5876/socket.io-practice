@@ -15,25 +15,11 @@ app.get("/", (req, res) => {
 });
 
 
-const teachers = io.of("teachers"); //OF conecta a un namespace especifico
-const students = io.of("students");
-
-teachers.on("connection", socket => {
-  console.log(socket.id + " se ha conectado a la sala de profes")
-
-  socket.on("send message", data => {
-    teachers.emit("message", data) //emite el mensaje o todos en el namespace teachers
+io.on("connection", socket => {
+  socket.on("is connected", msg => {
+    console.log(msg)
   })
 })
-
-students.on("connection", socket => {
-  console.log(socket.id + " se ha conectado a la sala de estudiantes")
-
-  socket.on("send message", data => {
-    students.emit("message", data) //emite el mensaje o todos en el namespace teachers
-  })
-})
-
 
 httpServer.listen(3000, () => {
   console.log("Running on port 3000");

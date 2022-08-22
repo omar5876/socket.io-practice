@@ -1,46 +1,20 @@
-const user = prompt("Escribe tu usuario");
+const socket = io();
 
-const profes = ["RetaxMaster", "juandc", "GNDX"];
 
-let socketNamepace, group;
+const send = document.querySelector("#send");
+const disconnect = document.querySelector("#disconnect");
+const reconnect = document.querySelector("#reconnect");
 
-const chat = document.querySelector("#chat");
-const namespace = document.querySelector("#namespace");
 
-if(profes.includes(user)){
-    socketNamepace = io("/teachers");
-    group = "teachers";
-}
-else {
-    socketNamepace = io("/students");
-    group = "students";
+send.addEventListener("click", () => {
+    if(socket.connected) socket.emit("is connected", "Estas conectado");
+})
 
-}
-
-socketNamepace.on("connect", () => {
-    namespace.textContent = group;
+disconnect.addEventListener("click", () => {
+    socket.disconnect();
 })
 
 
-//programando la logica de mensajes
-
-const sendMessage = document.querySelector("#sendMessage");
-
-sendMessage.addEventListener("click", () => {
-    const message = prompt("Escribe tu mensaje");
-
-    socketNamepace.emit("send message", {
-        user,
-        message
-    })
-})
-
-
-socketNamepace.on("message", messageData => {
-    const {user, message} = messageData;
-
-    const li = document.createElement("li");
-    li.textContent = `${user} : ${message}`;
-
-    chat.append(li);
+reconnect.addEventListener("click", () => {
+    socket.connect();
 })
