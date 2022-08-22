@@ -15,11 +15,12 @@ app.get("/", (req, res) => {
 });
 
 
-io.on("connection", socket => {
-  socket.on("is connected", msg => {
-    console.log(msg)
-  })
-})
+
+io.on("connection", (socket) => {
+ socket.on("circle position", position => {
+    socket.broadcast.emit("move circle", position)
+ })
+});
 
 httpServer.listen(3000, () => {
   console.log("Running on port 3000");
