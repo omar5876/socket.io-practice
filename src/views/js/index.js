@@ -16,8 +16,8 @@ const drag = e => {
     }
 
     drawCircle(position)
-
-    socket.emit("circle position", position)
+    console.log("Se envia el evento al servidor");
+    socket.volatile.emit("circle position", position)
 
 
 }
