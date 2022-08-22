@@ -1,36 +1,13 @@
-const socket = io();
-
-const circle = document.querySelector("#circle");
-
-const drawCircle = (position) => {
-    circle.style.top = position.top;
-    circle.style.left = position.left;
-}
-
-const drag = e => {
-   
-
-    const position = {
-        top: e.clientY + "px",
-        left: e.clientX + "px"
+const socket = io({
+    auth: {
+        token: "MR.SATAN"
     }
+});
 
-    drawCircle(position)
-    console.log("Se envia el evento al servidor");
-    socket.volatile.emit("circle position", position)
+//en caso de error en el middleware
 
-
-}
-
-document.addEventListener("mousedown", e => {
-    document.addEventListener("mousemove", drag)
-})
-
-document.addEventListener("mouseup", e => {
-    document.removeEventListener("mousemove", drag)
-})
-
-
-socket.on("move circle", position => {
-    drawCircle(position)
+socket.on("connect_error", err => {
+    console.log("Error de conexion :(")
+    console.log(err.message)
+    console.log(err.data.details)
 })
